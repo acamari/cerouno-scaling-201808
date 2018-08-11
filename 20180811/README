@@ -3,3 +3,6 @@ In centos:
 install dependencies:
 	$ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 	$ sudo yum install -y nodejs
+
+/etc/rc.local example:
+	$ (cd /home/acamari/cerouno-scaling-201808/20180811/app; sudo -u acamari npm start) >/tmp/log 2>&1 &
