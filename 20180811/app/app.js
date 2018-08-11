@@ -7,6 +7,10 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var { spawnSync } = require('child_process');
+var cmd = spawnSync('hostname');
+var hostname = cmd.stdout.toString();
+
 var app = express();
 
 // view engine setup
@@ -21,6 +25,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/slow/:ms', async (req, res, next) => {
+	const { ms = 1000 } = req.params;
+	const slow = async (ms) => new Promise(resolve => {
+		let i = 0;
+		let stop = 0;
+		let timer;
+
+		setTimeout(() => {
+			stop = 1;
+			clearInterval(timer);
+			resolve(i);
+		}, ms);
+		timer = setInterval(() => {
+			const initial = i;
+			while (!stop && i < (initial + 100)) {
+				i = i + 0.0001
+			}
+		}, 1)
+	})
+	res.json({ host: hostname, i: await slow(ms) });
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
