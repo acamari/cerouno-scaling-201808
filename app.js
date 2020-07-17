@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var { spawnSync } = require('child_process');
 var cmd = spawnSync('hostname');
 var hostname = cmd.stdout.toString();
+hostname = hostname.replace(/[^a-z0-9-]/gi, '');
 
 var app = express();
 
